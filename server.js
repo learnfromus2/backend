@@ -3,18 +3,25 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const path = require('path');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/mocktestplatform', {
+// MongoDB Connection - Use Render's environment variable or MongoDB Atlas
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mocktestplatform';
+
+mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
+}).then(() => {
+    console.log('✅ Connected to MongoDB');
+}).catch(err => {
+    console.error('❌ MongoDB connection error:', err);
 });
 
-// Schemas
+// Schemas (same as before)
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -67,24 +74,49 @@ const performanceSchema = new mongoose.Schema({
 
 const Performance = mongoose.model('Performance', performanceSchema);
 
-// Middleware - IMPORTANT: Serve static files from current directory
+// Middleware - CRITICAL for cross-origin requests
+app.use(cors({
+    origin: function(origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if(!origin) return callback(null, true);
+        
+        const allowedOrigins = [
+            'https://your-frontend-name.onrender.com',
+            'http://localhost:3000',
+            'http://localhost:8080'
+        ];
+        
+        if(allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname)); // Serve from current directory
+app.use(express.static(__dirname));
 
+// Session configuration for production
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key-here',
+    secret: process.env.SESSION_SECRET || 'fallback-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: false,
-        maxAge: 24 * 60 * 60 * 1000
-    }
+        secure: process.env.NODE_ENV === 'production', // HTTPS in production
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    },
+    store: new (require('connect-mongo')(session))({
+        mongooseConnection: mongoose.connection,
+        collection: 'sessions'
+    })
 }));
 
 // Authentication Middleware
 const requireAuth = (req, res, next) => {
-    console.log('Session user:', req.session.user);
     if (req.session.user) {
         next();
     } else {
@@ -102,8 +134,17 @@ const requireAdmin = (req, res, next) => {
 
 // Routes
 
-// Serve index.html for root route
-app.get('/', (req, res) => {
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV 
+    });
+});
+
+// Serve index.html for all routes (SPA)
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
@@ -111,7 +152,6 @@ app.get('/', (req, res) => {
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password, role } = req.body;
-        console.log('Register attempt:', username, role);
         
         const hashedPassword = await bcrypt.hash(password, 10);
         
@@ -132,7 +172,6 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        console.log('Login attempt:', username);
         
         const user = await User.findOne({ username });
         
@@ -142,7 +181,6 @@ app.post('/api/login', async (req, res) => {
                 username: user.username,
                 role: user.role
             };
-            console.log('Login successful:', req.session.user);
             res.json({ message: 'Login successful', user: req.session.user });
         } else {
             res.status(401).json({ error: 'Invalid credentials' });
@@ -281,7 +319,7 @@ async function initializeAdmin() {
     }
 }
 
-// Add some sample data for testing
+// Add some sample data
 async function addSampleData() {
     try {
         const questionCount = await Question.countDocuments();
@@ -311,46 +349,20 @@ async function addSampleData() {
             await Question.insertMany(sampleQuestions);
             console.log('Sample questions added');
         }
-
-        const testCount = await Test.countDocuments();
-        if (testCount === 0) {
-            const questions = await Question.find().limit(2);
-            const sampleTest = new Test({
-                title: "Sample JEE Physics Test",
-                description: "Basic physics concepts test",
-                questions: questions.map(q => q._id),
-                duration: 30,
-                subject: "Physics",
-                createdBy: "system"
-            });
-            await sampleTest.save();
-            console.log('Sample test added');
-        }
     } catch (error) {
         console.error('Error adding sample data:', error);
     }
 }
 
 // Start server
-mongoose.connection.once('open', async () => {
-    console.log('✅ Connected to MongoDB');
+app.listen(PORT, async () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📚 JEE/NEET Mock Test Platform Ready!`);
+    console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
     
-    await initializeAdmin();
-    await addSampleData();
-    
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running on http://localhost:${PORT}`);
-        console.log(`📚 JEE/NEET Mock Test Platform Ready!`);
-    });
-});
-
-mongoose.connection.on('error', (err) => {
-    console.error('❌ MongoDB connection error:', err);
-});
-
-// Handle graceful shutdown
-process.on('SIGINT', async () => {
-    console.log('\n🛑 Shutting down server...');
-    await mongoose.connection.close();
-    process.exit(0);
+    // Initialize data after server starts
+    if (mongoose.connection.readyState === 1) {
+        await initializeAdmin();
+        await addSampleData();
+    }
 });
