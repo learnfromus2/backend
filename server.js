@@ -81,7 +81,7 @@ app.use(cors({
         if(!origin) return callback(null, true);
         
         const allowedOrigins = [
-            'https://your-frontend-name.onrender.com',
+            'https://front-4yu6.onrender.com',
             'http://localhost:3000',
             'http://localhost:8080'
         ];

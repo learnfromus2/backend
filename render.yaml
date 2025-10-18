@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: jee-neet-mock-platform
+    name: jee-neet-backend
     env: node
     plan: free
     buildCommand: npm install
@@ -8,9 +8,19 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3000
       - key: MONGODB_URI
         fromDatabase:
           name: mocktest-db
           property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: admin123
+
+databases:
+  - name: mocktest-db
+    plan: free
+    databaseName: mocktestplatform
+    ipAllowList: []
