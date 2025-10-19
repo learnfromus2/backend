@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
@@ -21,7 +22,7 @@ mongoose.connect(MONGODB_URI, {
     console.error('❌ MongoDB connection error:', err);
 });
 
-// Schemas (same as before)
+// Schemas
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -99,19 +100,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-// Session configuration for production
+// Session configuration for production - FIXED VERSION
 app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production', // HTTPS in production
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     },
-    store: new (require('connect-mongo')(session))({
-        mongooseConnection: mongoose.connection,
-        collection: 'sessions'
+    store: MongoStore.create({
+        mongoUrl: MONGODB_URI,
+        collectionName: 'sessions'
     })
 }));
 
