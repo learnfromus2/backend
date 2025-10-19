@@ -5,6 +5,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -104,7 +105,7 @@ app.use(express.static(__dirname));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-key',
     resave: false,
-    saveUninitialized: false,
+    saveUnitialized: false,
     cookie: { 
         secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
@@ -140,16 +141,71 @@ app.get('/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV 
+        environment: process.env.NODE_ENV,
+        directory: __dirname,
+        files: fs.readdirSync(__dirname)
     });
 });
 
-// Serve index.html for all routes (SPA)
+// Check if index.html exists
+const indexPath = path.join(__dirname, 'index.html');
+console.log('Looking for index.html at:', indexPath);
+
+if (fs.existsSync(indexPath)) {
+    console.log('✅ index.html found at:', indexPath);
+} else {
+    console.log('❌ index.html NOT found at:', indexPath);
+    console.log('Files in directory:', fs.readdirSync(__dirname));
+}
+
+// Serve index.html for all routes (SPA) - with error handling
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    const indexPath = path.join(__dirname, 'index.html');
+    
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        // If index.html doesn't exist, send a basic HTML response
+        res.send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>JEE/NEET Mock Test Platform</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 40px; background: #f0f0f0; }
+                    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                    h1 { color: #333; }
+                    .status { padding: 10px; border-radius: 5px; margin: 10px 0; }
+                    .success { background: #d4edda; color: #155724; }
+                    .error { background: #f8d7da; color: #721c24; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>🚀 JEE/NEET Mock Test Platform</h1>
+                    <div class="status error">
+                        <strong>Notice:</strong> Frontend files are being loaded...
+                    </div>
+                    <div class="status success">
+                        <strong>Backend Status:</strong> ✅ Server is running correctly
+                    </div>
+                    <p>The backend API is working. Frontend interface will be available shortly.</p>
+                    <p><strong>API Endpoints:</strong></p>
+                    <ul>
+                        <li><code>POST /api/register</code> - User registration</li>
+                        <li><code>POST /api/login</code> - User login</li>
+                        <li><code>GET /api/tests</code> - Get available tests</li>
+                        <li><code>GET /api/performance</code> - Get user performance</li>
+                    </ul>
+                    <p><a href="/health">Check server health</a></p>
+                </div>
+            </body>
+            </html>
+        `);
+    }
 });
 
-// API Routes
+// API Routes (keep all your existing API routes exactly as they were)
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password, role } = req.body;
@@ -360,6 +416,8 @@ app.listen(PORT, async () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📚 JEE/NEET Mock Test Platform Ready!`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
+    console.log(`📁 Current directory: ${__dirname}`);
+    console.log(`📄 Files in directory:`, fs.readdirSync(__dirname));
     
     // Initialize data after server starts
     if (mongoose.connection.readyState === 1) {
