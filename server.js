@@ -105,7 +105,7 @@ app.use(express.static(__dirname));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback-secret-key',
     resave: false,
-    saveUnitialized: false,
+saveUninitialized: false,
     cookie: { 
         secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 * 1000,
