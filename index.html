@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSphere | JEE/NEET Mock Test Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #059669;
+            --accent: #d97706;
+            --danger: #dc2626;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Auth Styles */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+        }
+
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .test-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .test-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .test-badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Test Creation Styles */
+        .test-creation-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            grid-column: 1 / -1;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .difficulty-option {
+            flex: 1;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .difficulty-option.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .difficulty-option:hover {
+            border-color: var(--primary);
+        }
+
+        .question-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        .question-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-text {
+            flex: 1;
+            margin-right: 1rem;
+        }
+
+        .question-difficulty {
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .difficulty-easy {
+            background: var(--secondary);
+        }
+
+        .difficulty-medium {
+            background: var(--accent);
+        }
+
+        .difficulty-hard {
+            background: var(--danger);
+        }
+
+        /* Test Interface Styles */
+        .test-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .test-timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .question-container {
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+        }
+
+        .option.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .test-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .question-palette {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .palette-item {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .palette-item.answered {
+            background: var(--secondary);
+        }
+
+        .palette-item.current {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        /* AI Guidance Styles */
+        .guidance-result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .guidance-topic {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .guidance-content {
+            line-height: 1.6;
+        }
+
+        .guidance-content ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .guidance-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .test-creation-form {
+                grid-template-columns: 1fr;
+            }
+
+            .question-palette {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Section -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-card">
+            <!-- Login Form -->
+            <div id="loginSection">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="logo-text">EduSphere</div>
+                    <p style="opacity: 0.8; margin-top: 0.5rem;">JEE/NEET Mock Test Platform</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="username" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select class="form-input" id="role">
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <span>Sign In</span>
+                    </button>
+                </form>
+                <div style="text-align: center; margin-top: 1.5rem; color: rgba(255, 255, 255, 0.7);">
+                    Don't have an account? <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600;" onclick="showRegister()">Sign up</a>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerSection" class="hidden">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="logo-text">Create Account</div>
+                </div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="regUsername" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="regPassword" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select class="form-input" id="regRole">
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="registerBtn">
+                        <span>Create Account</span>
+                    </button>
+                </form>
+                <div style="text-align: center; margin-top: 1.5rem; color: rgba(255, 255, 255, 0.7);">
+                    Already have an account? <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600;" onclick="showLogin()">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="container">
+        <div class="dashboard" id="dashboard">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo" style="text-align: left; margin: 0;">
+                    <div class="logo-text">EduSphere</div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div>
+                        <div id="userName">User</div>
+                        <div id="userRole" style="opacity: 0.7; font-size: 0.9rem;">Role</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="logout()" style="width: auto; padding: 0.5rem 1rem;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="showSection('tests')">
+                    <i class="fas fa-file-alt"></i> Mock Tests
+                </div>
+                <div class="nav-tab" onclick="showSection('createTest')">
+                    <i class="fas fa-plus-circle"></i> Create Test
+                </div>
+                <div class="nav-tab" onclick="showSection('performance')">
+                    <i class="fas fa-chart-line"></i> Performance
+                </div>
+                <div class="nav-tab" onclick="showSection('guidance')">
+                    <i class="fas fa-robot"></i> AI Guidance
+                </div>
+                <div class="nav-tab hidden" id="adminTab" onclick="showSection('admin')">
+                    <i class="fas fa-cogs"></i> Admin
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="content-section active" id="testsSection">
+                <div class="card">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 class="card-title">Available Mock Tests</h2>
+                        <button class="btn btn-secondary" onclick="refreshTests()" style="width: auto;">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="test-grid" id="testsGrid">
+                        <!-- Test cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="createTestSection">
+                <div class="card">
+                    <h2 class="card-title">Create Custom Test</h2>
+                    <div class="test-creation-form">
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <select class="form-input" id="testSubject">
+                                <option value="physics">Physics</option>
+                                <option value="chemistry">Chemistry</option>
+                                <option value="mathematics">Mathematics</option>
+                                <option value="biology">Biology</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Chapter</label>
+                            <input type="text" class="form-input" id="testChapter" placeholder="Enter chapter name">
+                        </div>
+                        <div class="form-group form-row">
+                            <label class="form-label">Difficulty Level</label>
+                            <div class="difficulty-selector">
+                                <div class="difficulty-option" data-level="easy" onclick="selectDifficulty('easy')">
+                                    Easy
+                                </div>
+                                <div class="difficulty-option" data-level="medium" onclick="selectDifficulty('medium')">
+                                    Medium
+                                </div>
+                                <div class="difficulty-option" data-level="hard" onclick="selectDifficulty('hard')">
+                                    Hard
+                                </div>
+                                <div class="difficulty-option" data-level="mixed" onclick="selectDifficulty('mixed')">
+                                    Mixed
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of Questions</label>
+                            <input type="number" class="form-input" id="questionCount" min="1" max="50" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-input" id="testDuration" min="5" max="180" value="30">
+                        </div>
+                        <div class="form-group form-row">
+                            <button class="btn btn-primary" onclick="generateCustomTest()">
+                                <i class="fas fa-magic"></i> Generate Test
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="performanceSection">
+                <div class="card">
+                    <h2 class="card-title">Your Performance</h2>
+                    <div id="performanceData">
+                        <p style="opacity: 0.8; text-align: center; padding: 2rem;">No test attempts yet. Complete a mock test to see your performance analytics.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="guidanceSection">
+                <div class="card">
+                    <h2 class="card-title">AI Learning Guidance</h2>
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="chapterInput" placeholder="Enter chapter/topic (e.g., Organic Chemistry, Calculus)">
+                        <button class="btn btn-primary" onclick="getAIGuidance()" style="margin-top: 1rem;">
+                            <i class="fas fa-magic"></i> Get AI Guidance
+                        </button>
+                    </div>
+                    <div id="guidanceResult"></div>
+                </div>
+            </div>
+
+            <div class="content-section" id="adminSection">
+                <div class="card">
+                    <h2 class="card-title">Admin Dashboard</h2>
+                    <div id="adminContent">
+                        <div class="form-group">
+                            <button class="btn btn-primary" onclick="showQuestionManagement()">
+                                <i class="fas fa-database"></i> Manage Question Bank
+                            </button>
+                            <button class="btn btn-secondary" onclick="showTestManagement()" style="margin-left: 1rem;">
+                                <i class="fas fa-file-alt"></i> Manage Tests
+                            </button>
+                        </div>
+                        <div id="questionManagement" class="hidden">
+                            <h3 style="margin-bottom: 1rem;">Question Bank Management</h3>
+                            <div class="test-creation-form">
+                                <div class="form-group">
+                                    <label class="form-label">Subject</label>
+                                    <select class="form-input" id="questionSubject">
+                                        <option value="physics">Physics</option>
+                                        <option value="chemistry">Chemistry</option>
+                                        <option value="mathematics">Mathematics</option>
+                                        <option value="biology">Biology</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Chapter</label>
+                                    <input type="text" class="form-input" id="questionChapter" placeholder="Enter chapter name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Difficulty</label>
+                                    <select class="form-input" id="questionDifficulty">
+                                        <option value="easy">Easy</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="hard">Hard</option>
+                                    </select>
+                                </div>
+                                <div class="form-group form-row">
+                                    <label class="form-label">Question Text</label>
+                                    <textarea class="form-input" id="questionText" rows="3" placeholder="Enter the question text"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Option A</label>
+                                    <input type="text" class="form-input" id="optionA" placeholder="Option A">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Option B</label>
+                                    <input type="text" class="form-input" id="optionB" placeholder="Option B">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Option C</label>
+                                    <input type="text" class="form-input" id="optionC" placeholder="Option C">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Option D</label>
+                                    <input type="text" class="form-input" id="optionD" placeholder="Option D">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Correct Answer</label>
+                                    <select class="form-input" id="correctAnswer">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                    </select>
+                                </div>
+                                <div class="form-group form-row">
+                                    <button class="btn btn-primary" onclick="addQuestion()">
+                                        <i class="fas fa-plus"></i> Add Question
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="question-list" id="questionList">
+                                <!-- Questions will be listed here -->
+                            </div>
+                        </div>
+                        <div id="testManagement" class="hidden">
+                            <h3 style="margin-bottom: 1rem;">Test Management</h3>
+                            <div id="adminTestsList">
+                                <!-- Admin tests will be listed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Interface -->
+    <div class="test-interface hidden" id="testInterface">
+        <div class="container">
+            <div class="test-header">
+                <h2 id="testTitle">Mock Test</h2>
+                <div class="test-timer" id="testTimer">30:00</div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text" id="currentQuestionText">Question text will appear here</div>
+                <div class="options-container" id="optionsContainer">
+                    <!-- Options will be populated here -->
+                </div>
+            </div>
+            
+            <div class="test-navigation">
+                <button class="btn btn-secondary" id="prevQuestion" onclick="previousQuestion()">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <div>
+                    <span id="currentQuestionNumber">1</span> of <span id="totalQuestions">10</span>
+                </div>
+                <button class="btn btn-primary" id="nextQuestion" onclick="nextQuestion()">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <div class="question-palette" id="questionPalette">
+                <!-- Question numbers will be populated here -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="submitTest()" style="width: auto; padding: 1rem 2rem;">
+                    <i class="fas fa-paper-plane"></i> Submit Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://eduspherebackend-0ytt.onrender.com';
+        let currentUser = null;
+        let currentTest = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let testTimer = null;
+        let timeRemaining = 0;
+
+        // Enhanced API call function with better error handling
+        async function apiCall(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            
+            const config = {
+                ...options,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers,
+                },
+            };
+
+            try {
+                console.log(`Making API call to: ${url}`);
+                const response = await fetch(url, config);
+                
+                // Check if response is HTML (error page) instead of JSON
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('text/html')) {
+                    throw new Error('Server returned HTML instead of JSON. Check CORS configuration.');
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        // Check authentication
+        async function checkAuth() {
+            try {
+                const data = await apiCall('/api/user');
+                if (data.user) {
+                    currentUser = data.user;
+                    showDashboard();
+                }
+            } catch (error) {
+                console.log('Not authenticated or server error:', error.message);
+            }
+        }
+
+        // Login function
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const data = await apiCall('/api/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (data.user) {
+                    currentUser = data.user;
+                    showDashboard();
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            } catch (error) {
+                alert('Login failed. Please check your credentials and try again.');
+            } finally {
+                loginBtn.innerHTML = '<span>Sign In</span>';
+            }
+        });
+
+        // Register function
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const data = await apiCall('/api/register', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password, role })
+                });
+
+                alert('Registration successful! Please login.');
+                showLogin();
+            } catch (error) {
+                alert('Registration failed. Username may already exist.');
+            } finally {
+                registerBtn.innerHTML = '<span>Create Account</span>';
+            }
+        });
+
+        function showLogin() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('registerSection').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('registerSection').classList.remove('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userRole').textContent = currentUser.role;
+            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            
+            if (currentUser.role === 'admin') {
+                document.getElementById('adminTab').classList.remove('hidden');
+            }
+            
+            loadTests();
+            loadQuestions();
+        }
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName + 'Section').classList.add('active');
+            event.target.classList.add('active');
+            
+            if (sectionName === 'admin') {
+                loadAdminData();
+            }
+        }
+
+        function selectDifficulty(level) {
+            document.querySelectorAll('.difficulty-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`.difficulty-option[data-level="${level}"]`).classList.add('selected');
+        }
+
+        async function loadTests() {
+            try {
+                const tests = await apiCall('/api/tests');
+                const testsGrid = document.getElementById('testsGrid');
+                
+                if (tests.length === 0) {
+                    testsGrid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; opacity: 0.7;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <p>No tests available yet. Check back later or create your own custom test.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                testsGrid.innerHTML = tests.map(test => `
+                    <div class="test-card" onclick="startTest('${test._id}')">
+                        <div class="test-badge">${test.duration} min</div>
+                        <h3>${test.title}</h3>
+                        <p style="opacity: 0.8; margin: 1rem 0;">${test.description}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="background: var(--primary); padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem;">${test.subject}</span>
+                            <span style="opacity: 0.7;">${test.questions?.length || 0} questions</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load tests:', error);
+                document.getElementById('testsGrid').innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--danger);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Failed to load tests. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function generateCustomTest() {
+            const subject = document.getElementById('testSubject').value;
+            const chapter = document.getElementById('testChapter').value;
+            const difficulty = document.querySelector('.difficulty-option.selected')?.dataset.level || 'mixed';
+            const questionCount = parseInt(document.getElementById('questionCount').value);
+            const duration = parseInt(document.getElementById('testDuration').value);
+            
+            if (!chapter) {
+                alert('Please enter a chapter name');
+                return;
+            }
+            
+            try {
+                const response = await apiCall('/api/tests/generate', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        subject,
+                        chapter,
+                        difficulty,
+                        questionCount,
+                        duration,
+                        title: `${subject.charAt(0).toUpperCase() + subject.slice(1)} - ${chapter} (${difficulty})`
+                    })
+                });
+                
+                if (response.test) {
+                    currentTest = response.test;
+                    startTest(currentTest._id);
+                } else {
+                    alert('Failed to generate test. Please try again.');
+                }
+            } catch (error) {
+                console.error('Failed to generate test:', error);
+                alert('Failed to generate test. Please try again.');
+            }
+        }
+
+        async function startTest(testId) {
+            try {
+                const test = await apiCall(`/api/tests/${testId}`);
+                currentTest = test;
+                currentQuestionIndex = 0;
+                userAnswers = new Array(test.questions.length).fill(null);
+                timeRemaining = test.duration * 60; // Convert to seconds
+                
+                document.getElementById('testTitle').textContent = test.title;
+                document.getElementById('totalQuestions').textContent = test.questions.length;
+                
+                showTestInterface();
+                displayQuestion(0);
+                startTimer();
+                
+                // Create question palette
+                const palette = document.getElementById('questionPalette');
+                palette.innerHTML = '';
+                for (let i = 0; i < test.questions.length; i++) {
+                    const paletteItem = document.createElement('div');
+                    paletteItem.className = 'palette-item';
+                    paletteItem.textContent = i + 1;
+                    paletteItem.onclick = () => displayQuestion(i);
+                    palette.appendChild(paletteItem);
+                }
+            } catch (error) {
+                console.error('Failed to start test:', error);
+                alert('Failed to load test. Please try again.');
+            }
+        }
+
+        function showTestInterface() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('testInterface').classList.remove('hidden');
+        }
+
+        function hideTestInterface() {
+            document.getElementById('testInterface').classList.add('hidden');
+            document.getElementById('dashboard').style.display = 'block';
+        }
+
+        function displayQuestion(index) {
+            if (!currentTest || !currentTest.questions || index < 0 || index >= currentTest.questions.length) {
+                return;
+            }
+            
+            currentQuestionIndex = index;
+            const question = currentTest.questions[index];
+            
+            document.getElementById('currentQuestionNumber').textContent = index + 1;
+            document.getElementById('currentQuestionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            ['A', 'B', 'C', 'D'].forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = `option ${userAnswers[index] === option ? 'selected' : ''}`;
+                optionElement.textContent = `${option}. ${question[`option${option}`]}`;
+                optionElement.onclick = () => selectAnswer(option);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update question palette
+            document.querySelectorAll('.palette-item').forEach((item, i) => {
+                item.classList.remove('current');
+                if (userAnswers[i] !== null) {
+                    item.classList.add('answered');
+                }
+            });
+            document.querySelectorAll('.palette-item')[index].classList.add('current');
+            
+            // Update navigation buttons
+            document.getElementById('prevQuestion').disabled = index === 0;
+            document.getElementById('nextQuestion').disabled = index === currentTest.questions.length - 1;
+        }
+
+        function selectAnswer(option) {
+            userAnswers[currentQuestionIndex] = option;
+            displayQuestion(currentQuestionIndex); // Refresh to show selection
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentTest.questions.length - 1) {
+                displayQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                displayQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+            
+            testTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    submitTest();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('testTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        async function submitTest() {
+            if (testTimer) {
+                clearInterval(testTimer);
+            }
+            
+            try {
+                const result = await apiCall(`/api/tests/${currentTest._id}/submit`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        answers: userAnswers
+                    })
+                });
+                
+                alert(`Test submitted! Your score: ${result.score}/${currentTest.questions.length}`);
+                hideTestInterface();
+                loadTests();
+            } catch (error) {
+                console.error('Failed to submit test:', error);
+                alert('Failed to submit test. Please try again.');
+            }
+        }
+
+        async function getAIGuidance() {
+            const chapter = document.getElementById('chapterInput').value;
+            if (!chapter) {
+                alert('Please enter a chapter or topic');
+                return;
+            }
+            
+            const guidanceResult = document.getElementById('guidanceResult');
+            guidanceResult.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                const response = await apiCall('/api/ai-guidance', {
+                    method: 'POST',
+                    body: JSON.stringify({ topic: chapter })
+                });
+                
+                guidanceResult.innerHTML = `
+                    <div class="guidance-result">
+                        <div class="guidance-topic">${chapter}</div>
+                        <div class="guidance-content">
+                            <p>${response.guidance || 'No specific guidance available for this topic yet.'}</p>
+                            <p>Here are some general tips:</p>
+                            <ul>
+                                <li>Review fundamental concepts related to ${chapter}</li>
+                                <li>Practice problems with varying difficulty levels</li>
+                                <li>Focus on understanding rather than memorization</li>
+                                <li>Take timed practice tests to improve speed</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Failed to get AI guidance:', error);
+                guidanceResult.innerHTML = `
+                    <div style="color: var(--danger); text-align: center; padding: 2rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>AI guidance is currently unavailable. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function showQuestionManagement() {
+            document.getElementById('questionManagement').classList.remove('hidden');
+            document.getElementById('testManagement').classList.add('hidden');
+        }
+
+        function showTestManagement() {
+            document.getElementById('questionManagement').classList.add('hidden');
+            document.getElementById('testManagement').classList.remove('hidden');
+            loadAdminTests();
+        }
+
+        async function loadQuestions() {
+            try {
+                const questions = await apiCall('/api/questions');
+                const questionList = document.getElementById('questionList');
+                
+                if (questions.length === 0) {
+                    questionList.innerHTML = '<p style="opacity: 0.7; text-align: center; padding: 2rem;">No questions in the database yet.</p>';
+                    return;
+                }
+                
+                questionList.innerHTML = questions.map(q => `
+                    <div class="question-item">
+                        <div class="question-text">${q.text}</div>
+                        <div class="question-difficulty difficulty-${q.difficulty}">${q.difficulty}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load questions:', error);
+            }
+        }
+
+        async function addQuestion() {
+            const subject = document.getElementById('questionSubject').value;
+            const chapter = document.getElementById('questionChapter').value;
+            const difficulty = document.getElementById('questionDifficulty').value;
+            const text = document.getElementById('questionText').value;
+            const optionA = document.getElementById('optionA').value;
+            const optionB = document.getElementById('optionB').value;
+            const optionC = document.getElementById('optionC').value;
+            const optionD = document.getElementById('optionD').value;
+            const correctAnswer = document.getElementById('correctAnswer').value;
+            
+            if (!text || !chapter || !optionA || !optionB || !optionC || !optionD) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            try {
+                await apiCall('/api/questions', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        subject,
+                        chapter,
+                        difficulty,
+                        text,
+                        optionA,
+                        optionB,
+                        optionC,
+                        optionD,
+                        correctAnswer
+                    })
+                });
+                
+                alert('Question added successfully!');
+                loadQuestions();
+                
+                // Clear form
+                document.getElementById('questionText').value = '';
+                document.getElementById('optionA').value = '';
+                document.getElementById('optionB').value = '';
+                document.getElementById('optionC').value = '';
+                document.getElementById('optionD').value = '';
+            } catch (error) {
+                console.error('Failed to add question:', error);
+                alert('Failed to add question. Please try again.');
+            }
+        }
+
+        async function loadAdminTests() {
+            try {
+                const tests = await apiCall('/api/tests');
+                const adminTestsList = document.getElementById('adminTestsList');
+                
+                if (tests.length === 0) {
+                    adminTestsList.innerHTML = '<p style="opacity: 0.7; text-align: center; padding: 2rem;">No tests available.</p>';
+                    return;
+                }
+                
+                adminTestsList.innerHTML = tests.map(test => `
+                    <div class="test-card">
+                        <h3>${test.title}</h3>
+                        <p style="opacity: 0.8; margin: 1rem 0;">${test.description}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="background: var(--primary); padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem;">${test.subject}</span>
+                            <span style="opacity: 0.7;">${test.questions?.length || 0} questions</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-secondary" onclick="deleteTest('${test._id}')" style="width: auto; padding: 0.5rem 1rem;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load admin tests:', error);
+            }
+        }
+
+        async function deleteTest(testId) {
+            if (!confirm('Are you sure you want to delete this test?')) {
+                return;
+            }
+            
+            try {
+                await apiCall(`/api/tests/${testId}`, {
+                    method: 'DELETE'
+                });
+                
+                alert('Test deleted successfully!');
+                loadAdminTests();
+            } catch (error) {
+                console.error('Failed to delete test:', error);
+                alert('Failed to delete test. Please try again.');
+            }
+        }
+
+        function loadAdminData() {
+            loadQuestions();
+            loadAdminTests();
+        }
+
+        function refreshTests() {
+            loadTests();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+        }
+
+        // Initialize the app
+        checkAuth();
+        
+        // Set default difficulty
+        selectDifficulty('mixed');
+    </script>
+</body>
+</html>
